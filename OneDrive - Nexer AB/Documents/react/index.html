@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React Todo App</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    input, button { padding: 0.5rem; margin-right: 0.5rem; }
+    ul { list-style-type: none; padding: 0; }
+    li { margin: 0.5rem 0; }
+    .completed { text-decoration: line-through; color: gray; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <!-- React and ReactDOM from CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script>
+    const { useState } = React;
+
+    function TodoApp() {
+      const [todos, setTodos] = useState([]);
+      const [input, setInput] = useState('');
+
+      function addTodo() {
+        if (!input.trim()) return;
+        setTodos([...todos, { text: input.trim(), done: false }]);
+        setInput('');
+      }
+
+      function toggleDone(index) {
+        const newTodos = todos.slice();
+        newTodos[index].done = !newTodos[index].done;
+        setTodos(newTodos);
+      }
+
+      function removeTodo(index) {
+        setTodos(todos.filter((_, i) => i !== index));
+      }
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Todo App'),
+          React.createElement('div', null,
+            React.createElement('input', {
+              value: input,
+              onChange: e => setInput(e.target.value),
+              placeholder: 'Enter a task'
+            }),
+            React.createElement('button', { onClick: addTodo }, 'Add')
+          ),
+          React.createElement('ul', null,
+            todos.map((todo, idx) =>
+              React.createElement('li', { key: idx },
+                React.createElement('span', {
+                  className: todo.done ? 'completed' : '',
+                  onClick: () => toggleDone(idx),
+                  style: { cursor: 'pointer' }
+                }, todo.text),
+                React.createElement('button', { onClick: () => removeTodo(idx) }, 'x')
+              )
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      React.createElement(TodoApp)
+    );
+  </script>
+</body>
+</html>
